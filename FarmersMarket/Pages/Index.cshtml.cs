@@ -50,6 +50,7 @@ namespace FarmersMarket.Pages
                 var CreditCard = protector.Unprotect(EncryptedCreditCard);
                 var aboutme = contxt.HttpContext.Session.GetString("AboutMe");
                 var location = contxt.HttpContext.Session.GetString("Location");
+                var photo = contxt.HttpContext.Session.GetString("photo");
 
                 Name.Add(UserName);
                 Name.Add(Password);
@@ -59,6 +60,7 @@ namespace FarmersMarket.Pages
                 Name.Add(CreditCard);
                 Name.Add(aboutme);
                 Name.Add(location);
+                Name.Add(photo);
             }
             else
             {

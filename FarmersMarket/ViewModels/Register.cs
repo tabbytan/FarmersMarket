@@ -10,6 +10,7 @@ namespace FarmersMarket.ViewModels
 
         [Required]
         [DataType(DataType.EmailAddress)]
+        [EmailAddress]
         public string Email { get; set; }
 
         [Required]
@@ -25,12 +26,14 @@ namespace FarmersMarket.ViewModels
 
         [Required]
 		[DataType(DataType.CreditCard)]
+        [CreditCard]
 		public string CreditCard { get; set; }
 
         [Required]
         public string FullName { get; set; }
         [Required]
         [DataType(DataType.PhoneNumber)]
+        [Phone]
         public string PhoneNumber { get; set; }
 
         [Required]
@@ -40,6 +43,8 @@ namespace FarmersMarket.ViewModels
         public string Location { get; set; }
         [Required]
         public string AboutMe { get; set; }
+
+        public string? ImageURL { get; set; }
       
 
 

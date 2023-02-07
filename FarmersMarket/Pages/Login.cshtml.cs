@@ -65,8 +65,9 @@ namespace FarmersMarket.Pages
 						contxt?.HttpContext?.Session.SetString("CreditCard", user.CreditCard);
 						contxt?.HttpContext?.Session.SetString("AboutMe", user.AboutMe);
 						contxt?.HttpContext?.Session.SetString("Location", user.Location);
+                        contxt?.HttpContext?.Session.SetString("photo", user.ImageURL);
 
-						var identity = userManager.FindByIdAsync(user.Id).Result;
+                        var identity = userManager.FindByIdAsync(user.Id).Result;
 						identity.LoginCheck = true;
 						IdentityResult result = userManager.UpdateAsync(identity).Result;
 

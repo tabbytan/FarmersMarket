@@ -15,5 +15,7 @@ namespace FarmersMarket.Model
 		public string Location { get; set; }
 
 		public bool LoginCheck { get; set; }
+
+		public string? ImageURL { get; set; }
 	}
 }
