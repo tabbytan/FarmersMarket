@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.VisualBasic;
 using System.Reflection.Metadata;
+using FarmersMarket.Core;
 
 namespace FarmersMarket.Pages
 {
@@ -16,18 +17,20 @@ namespace FarmersMarket.Pages
 		public Login LModel { get; set; }
 
 		private readonly AuthDbContext authDbContext;
+		private readonly GoogleCaptchaService _captchaservice;
 
 		private readonly IHttpContextAccessor contxt;
 
 		private readonly SignInManager<ApplicationUser> signInManager;
 
 		private readonly UserManager<ApplicationUser> userManager;
-		public LoginModel(SignInManager<ApplicationUser> signInManager, IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager, AuthDbContext authDbContext)
+		public LoginModel(SignInManager<ApplicationUser> signInManager, IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager, AuthDbContext authDbContext,GoogleCaptchaService captchaservice)
 		{
 			this.signInManager = signInManager;
 			contxt = httpContextAccessor;
 			this.userManager = userManager;
 			this.authDbContext= authDbContext;
+			_captchaservice = captchaservice;
 		}
 
 		public void OnGet()
@@ -35,6 +38,12 @@ namespace FarmersMarket.Pages
         }
 		public async Task<IActionResult> OnPostAsync()
 		{
+
+			var captchaResult = await _captchaservice.VerifyToken(LModel.Token);
+			if (!captchaResult)
+			{
+				return Page();
+			}
 			if (ModelState.IsValid)
 			{
 
