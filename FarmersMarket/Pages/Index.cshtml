@@ -1,0 +1,29 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">User Info</h1>
+    @{
+        try
+        {
+    <p>
+        Username: @Html.DisplayFor(model => model.Name[0]) <br/>
+        PasswordHash:@Html.DisplayFor(model => model.Name[1])<br />
+        CreditCard: @Html.DisplayFor(model => model.Name[5])<br/>
+        Gender: @Html.DisplayFor(model => model.Name[4])<br />
+        MobileNumber: @Html.DisplayFor(model => model.Name[3])<br />
+        EmailAddress: @Html.DisplayFor(model => model.Name[2])<br />
+        Photo: <br/>
+        AboutMe: @Html.DisplayFor(model => model.Name[6]) <br />
+        Location: @Html.DisplayFor(model => model.Name[7]) <br />
+
+            </p>
+        }
+        catch
+        {
+        }
+    }
+</div>

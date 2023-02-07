@@ -1,0 +1,114 @@
+﻿@page
+@model FarmersMarket.Pages.RegisterModel
+@{
+}
+
+<div class="container mt-5">
+
+	<div class="row justify-content-center align-items-center">
+
+		<div class="col-sm-12 col-md-12 col-lg-4">
+			<h1 class="mb-3">Register </h1>
+
+			<form method="post">
+				<div asp-validation-summary="All" class="text-danger"></div>
+
+				<div class="mb-3">
+					<label class="form-label" asp-for="RModel.Email">Email Address</label>
+					<input type="Text" asp-for="RModel.Email" class="form-control" />
+					<span asp-validaton-for="RModel.Email" class="text-danger"></span>
+				</div>
+				<div class="mb-3">
+					<label class="form-label" asp-for="RModel.CreditCard">Credit Card</label>
+					<input type="Text" asp-for="RModel.CreditCard" class="form-control" />
+					<span asp-validaton-for="RModel.CreditCard" class="text-danger"></span>
+				</div>
+				<div class="mb-3">
+					<label class="form-label" asp-for="RModel.FullName">Full Name</label>
+					<input type="Text" asp-for="RModel.FullName" class="form-control" />
+					<span asp-validaton-for="RModel.FullName" class="text-danger"></span>
+				</div>
+				<div class="mb-3">
+					<label class="form-label" asp-for="RModel.Gender">Gender</label><br/>
+					@foreach (var gender in Model.Genders)
+					{
+						<input type="radio" asp-for="RModel.Gender" value="@gender" id="Gender@(gender)"/>@gender<br/>
+					}
+				</div>
+
+				<div class="mb-3">
+					<label class="form-label" asp-for="RModel.AboutMe">About Me</label>
+					<input type="Textarea" asp-for="RModel.AboutMe" class="form-control" />
+					<span asp-validaton-for="RModel.AboutMe" class="text-danger"></span>
+				</div>
+				<div class="mb-3">
+					<label class="form-label" asp-for="RModel.Location">About Me</label>
+					<input type="Text" asp-for="RModel.Location" class="form-control" />
+					<span asp-validaton-for="RModel.Location" class="text-danger"></span>
+				</div>
+
+				@*add code for picture,gender,aboutme,*@
+				<div class="mb-3">
+					<label class="form-label" asp-for="RModel.PhoneNumber">Phone Number</label>
+					<input type="Text" asp-for="RModel.PhoneNumber" class="form-control" />
+					<span asp-validaton-for="RModel.PhoneNumber" class="text-danger"></span>
+				</div>
+
+
+				<div class="mb-3">
+					<label class="form-label" asp-for="RModel.Password">Password</label>
+					<input type="Text" asp-for="RModel.Password" class="form-control" id="passwdchecker" onkeyup="validate()"/>
+					<span asp-validaton-for="RModel.Password" class="text-danger" id="passwdchecked"></span>
+				</div>
+
+				<div class="mb-3">
+					<label class="form-label" asp-for="RModel.ConfirmPassword">Confirm Password</label>
+					<input type="Text" asp-for="RModel.ConfirmPassword" class="form-control" />
+					<span asp-validaton-for="RModel.ConfirmPassword" class="text-danger"></span>
+				</div>
+
+
+				<div class="mb-3">
+					<button type="submit" class="btn btn-primary">Register</button>
+				</div>
+			</form>
+
+			<script type="text/javascript">
+				function validate(){
+					var password = document.getElementById("passwdchecker").value;
+					if (password.length<12){
+						document.getElementById("passwdchecked").innerHTML = "Password Length Requires at least 12 characters"
+						document.getElementById("passwdchecked").style.color = "Red";
+
+						return ("too_short")
+					
+					}
+					else if (password.search(/[0-9]/) == -1){
+						document.getElementById("passwdchecked").innerHTML = "Password needs 1 number";
+						document.getElementById("passwdchecked").style.color = "Red";
+
+						return("no_number")
+					}
+					else if (password.search(/[A-Z]/) == -1){
+						document.getElementById("passwdchecked").innerHTML = "Password needs 1 uppercase letter";
+						return("no_upper")
+					}
+					else if (password.search(/[a-a]/) == -1) {
+						document.getElementById("passwdchecked").innerHTML = "Password needs 1 lowercase letter";
+						return("no_lower")
+					}
+					else if (password.search(/\W|_/g) == -1) {
+						document.getElementById("passwdchecked").innerHTML = "Password needs 1 special symbol";
+						return ("no_special")
+					}
+
+					document.getElementById("passwdchecked").innerHTML = "Exellent";
+					document.getElementById("passwdchecked").style.color = "Blue" ;
+					document.getElementById("passwdchecked").cssText = 'display:inline !important';
+					
+				}
+
+			</script>
+		</div>
+	</div>
+</div>
