@@ -1,10 +1,3 @@
-using FarmersMarket.Core;
-using FarmersMarket.Model;
-using FarmersMarket.ViewModels;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-
 namespace FarmersMarket.Pages
 
 {
@@ -25,10 +18,13 @@ namespace FarmersMarket.Pages
 
 		private readonly UserManager<ApplicationUser> userManager;
 		public LoginModel(SignInManager<ApplicationUser> signInManager, IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager, AuthDbContext authDbContext, GoogleCaptchaService captchaservice)
+		public LoginModel(SignInManager<ApplicationUser> signInManager, IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager, AuthDbContext authDbContext, GoogleCaptchaService captchaservice)
 		{
 			this.signInManager = signInManager;
 			contxt = httpContextAccessor;
 			this.userManager = userManager;
+			this.authDbContext = authDbContext;
+			_captchaservice = captchaservice;
 			this.authDbContext = authDbContext;
 			_captchaservice = captchaservice;
 		}
