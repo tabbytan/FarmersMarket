@@ -2,6 +2,11 @@
 @model FarmersMarket.Pages.LoginModel
 @{
 }
+
+@using FarmersMarket.Core;
+@using Microsoft.Extensions.Configuration
+@using Microsoft.Extensions.Options;
+@inject IOptions<GoogleCaptchaConfig> GoogleCaptchaConfig
 <div class="container mt-5">
 
 	<div class="row justify-content-center align-items-center">
@@ -9,9 +14,9 @@
 		<div class="col-sm-12 col-md-12 col-lg-4">
 			<h1 class="mb-3">Login </h1>
 
-			<form method="post">
+			<form method="post"  asp-antiforgery="true">
 				<div asp-validation-summary="All" class="text-danger"></div>
-
+				<input type="hidden" asp-for="LModel.Token" id="LoginToken"/>
 				<div class="mb-3">
 					<label class="form-label" asp-for="LModel.Email">Email Address</label>
 					<input type="Text" asp-for="LModel.Email" class="form-control" />
@@ -36,3 +41,26 @@
 		</div>
 	</div>
 </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+<script src="https://www.google.com/recaptcha/api.js?render=@GoogleCaptchaConfig.Value.SiteKey"></script>
+<script type="text/javascript">
+	function getToken(){
+			 grecaptcha.ready(function() {
+          grecaptcha.execute('@GoogleCaptchaConfig.Value.SiteKey', {action: 'submit'}).then(function(token) {
+              // Add your logic to submit to your backend server here.
+			  console.log(token);
+			  document.getElementById("LoginToken").value = token
+          });
+        });
+	}
+
+	setInterval(getToken,115000);
+	$(function(){
+		getToken();
+	})
+
+</script>
+
+
+
+

@@ -12,5 +12,8 @@ namespace FarmersMarket.ViewModels
         public string Password { get; set; }
         public bool RememberMe { get; set; }
 
+        [Required]
+        public string Token { get; set; }
+
     }
 }

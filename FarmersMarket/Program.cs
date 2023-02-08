@@ -7,11 +7,14 @@ using FarmersMarket.Model;
 using AspNetCore.ReCaptcha;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Builder;
+using FarmersMarket.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.Configure<GoogleCaptchaConfig>(builder.Configuration.GetSection("GoogleRecaptcha"));
+builder.Services.AddTransient(typeof(GoogleCaptchaService));
 builder.Services.AddAuthorization();
 builder.Services.AddDbContext<AuthDbContext>();
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<AuthDbContext>();

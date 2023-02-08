@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.IdentityModel.Tokens;
+using System.Web;
 
 namespace FarmersMarket.Pages
 {
@@ -16,17 +16,17 @@ namespace FarmersMarket.Pages
 
     {
         private readonly ILogger<IndexModel> _logger;
-		private readonly IHttpContextAccessor contxt;
+        private readonly IHttpContextAccessor contxt;
         private readonly SignInManager<ApplicationUser> signInManager;
-		private readonly AuthDbContext authDbContext;
+        private readonly AuthDbContext authDbContext;
         private readonly UserManager<ApplicationUser> userManager;
 
         public IndexModel(ILogger<IndexModel> logger, IHttpContextAccessor httpContextAccessor, SignInManager<ApplicationUser> signInManager, AuthDbContext authDbContext, UserManager<ApplicationUser> userManager)
         {
             _logger = logger;
-            contxt= httpContextAccessor;
+            contxt = httpContextAccessor;
             this.signInManager = signInManager;
-			this.authDbContext = authDbContext;
+            this.authDbContext = authDbContext;
             this.userManager = userManager;
         }
 
@@ -38,7 +38,8 @@ namespace FarmersMarket.Pages
         {
 
 
-            if (contxt.HttpContext.Session.GetString("Email") != null) { 
+            if (contxt.HttpContext.Session.GetString("Email") != null)
+            {
                 var UserName = contxt.HttpContext.Session.GetString("FullName");
                 var Password = contxt.HttpContext.Session.GetString("PasswordHash");
                 var Email = contxt.HttpContext.Session.GetString("Email");
@@ -52,30 +53,36 @@ namespace FarmersMarket.Pages
                 var location = contxt.HttpContext.Session.GetString("Location");
                 var photo = contxt.HttpContext.Session.GetString("photo");
 
+
+                //decode
+                StringWriter stringWriter = new StringWriter();
+
+                HttpUtility.HtmlDecode(aboutme, stringWriter);
+
                 Name.Add(UserName);
                 Name.Add(Password);
                 Name.Add(Email);
                 Name.Add(PhoneNumber);
                 Name.Add(Gender);
                 Name.Add(CreditCard);
-                Name.Add(aboutme);
+                Name.Add(stringWriter.ToString());
                 Name.Add(location);
                 Name.Add(photo);
             }
             else
             {
                 OnPostLogoutAsync();
-			}
-
-            
+            }
 
 
-		}
-		public async Task<IActionResult> OnPostLogoutAsync()
-		{
 
-			if (contxt.HttpContext.Session.GetString("Email") != null)
-			{
+
+        }
+        public async Task<IActionResult> OnPostLogoutAsync()
+        {
+
+            if (contxt.HttpContext.Session.GetString("Email") != null)
+            {
                 var identity = userManager.FindByEmailAsync(contxt.HttpContext.Session.GetString("Email")).Result;
                 identity.LoginCheck = false;
                 IdentityResult result = userManager.UpdateAsync(identity).Result;
@@ -87,18 +94,18 @@ namespace FarmersMarket.Pages
                 context.SaveChanges();
 
                 contxt?.HttpContext?.Session.Remove(contxt.HttpContext.Session.GetString("Email"));
-				contxt.HttpContext.Session.Remove("LoginCheck");
-				contxt.HttpContext.Session.Remove("FullName");
-				contxt.HttpContext.Session.Remove("PasswordHash");
-				contxt.HttpContext.Session.Remove("Email");
-				contxt.HttpContext.Session.Remove("Gender");
-				contxt.HttpContext.Session.Remove("PhoneNumber");
-				contxt.HttpContext.Session.Remove("CreditCard");
-			}
+                contxt.HttpContext.Session.Remove("LoginCheck");
+                contxt.HttpContext.Session.Remove("FullName");
+                contxt.HttpContext.Session.Remove("PasswordHash");
+                contxt.HttpContext.Session.Remove("Email");
+                contxt.HttpContext.Session.Remove("Gender");
+                contxt.HttpContext.Session.Remove("PhoneNumber");
+                contxt.HttpContext.Session.Remove("CreditCard");
+            }
 
 
-			await signInManager.SignOutAsync();
-			return RedirectToPage("Login");
-		}
-	}
+            await signInManager.SignOutAsync();
+            return RedirectToPage("Login");
+        }
+    }
 }

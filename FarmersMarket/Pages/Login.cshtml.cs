@@ -1,40 +1,50 @@
+using FarmersMarket.Core;
 using FarmersMarket.Model;
 using FarmersMarket.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.DataProtection;
-using Microsoft.VisualBasic;
-using System.Reflection.Metadata;
 
 namespace FarmersMarket.Pages
+
 {
-    public class LoginModel : PageModel
-    {
+	public class LoginModel : PageModel
+
+
+	{
+
 		[BindProperty]
 		public Login LModel { get; set; }
 
 		private readonly AuthDbContext authDbContext;
+		private readonly GoogleCaptchaService _captchaservice;
 
 		private readonly IHttpContextAccessor contxt;
 
 		private readonly SignInManager<ApplicationUser> signInManager;
 
 		private readonly UserManager<ApplicationUser> userManager;
-		public LoginModel(SignInManager<ApplicationUser> signInManager, IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager, AuthDbContext authDbContext)
+		public LoginModel(SignInManager<ApplicationUser> signInManager, IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager, AuthDbContext authDbContext, GoogleCaptchaService captchaservice)
 		{
 			this.signInManager = signInManager;
 			contxt = httpContextAccessor;
 			this.userManager = userManager;
-			this.authDbContext= authDbContext;
+			this.authDbContext = authDbContext;
+			_captchaservice = captchaservice;
 		}
 
 		public void OnGet()
-        {
-        }
+		{
+		}
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> OnPostAsync()
 		{
+
+			var captchaResult = await _captchaservice.VerifyToken(LModel.Token);
+			if (!captchaResult)
+			{
+				return Page();
+			}
 			if (ModelState.IsValid)
 			{
 
@@ -43,9 +53,9 @@ namespace FarmersMarket.Pages
 				if (identityResult.Succeeded)
 
 				{
-                    var user = await userManager.FindByEmailAsync(LModel.Email);
-                    var context = authDbContext;
-                    if (user.LoginCheck == true)
+					var user = await userManager.FindByEmailAsync(LModel.Email);
+					var context = authDbContext;
+					if (user.LoginCheck == true)
 					{
 						var context2 = authDbContext;
 						var infomation2 = new AuditLog { Email = LModel.Email, Action = "Tried to log in another place at " + DateTime.Now };
@@ -65,13 +75,13 @@ namespace FarmersMarket.Pages
 						contxt?.HttpContext?.Session.SetString("CreditCard", user.CreditCard);
 						contxt?.HttpContext?.Session.SetString("AboutMe", user.AboutMe);
 						contxt?.HttpContext?.Session.SetString("Location", user.Location);
-                        contxt?.HttpContext?.Session.SetString("photo", user.ImageURL);
+						contxt?.HttpContext?.Session.SetString("photo", user.ImageURL);
 
-                        var identity = userManager.FindByIdAsync(user.Id).Result;
+						var identity = userManager.FindByIdAsync(user.Id).Result;
 						identity.LoginCheck = true;
 						IdentityResult result = userManager.UpdateAsync(identity).Result;
 
-                        var infomation = new AuditLog { Email = LModel.Email, Action = "Login at " + DateTime.Now };
+						var infomation = new AuditLog { Email = LModel.Email, Action = "Login at " + DateTime.Now };
 						context.AuditLog.Add(infomation);
 
 						context.SaveChanges();
@@ -80,14 +90,14 @@ namespace FarmersMarket.Pages
 					}
 				}
 				ModelState.AddModelError("", "Username or Password incorrect");
-				
+
 			}
 			return Page();
 		}
-        public async Task<IActionResult> OnKickOutAsync()
-        {
-            await signInManager.SignOutAsync();
-            return RedirectToPage("Login");
-        }
-    }
+		public async Task<IActionResult> OnKickOutAsync()
+		{
+			await signInManager.SignOutAsync();
+			return RedirectToPage("Login");
+		}
+	}
 }

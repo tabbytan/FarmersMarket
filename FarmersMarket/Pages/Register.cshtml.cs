@@ -1,10 +1,10 @@
+using FarmersMarket.Model;
+using FarmersMarket.ViewModels;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using FarmersMarket.ViewModels;
-using FarmersMarket.Model;
-using Microsoft.AspNetCore.DataProtection;
-using System.Runtime.Intrinsics.X86;
+using System.Web;
 
 namespace FarmersMarket.Pages
 {
@@ -23,7 +23,7 @@ namespace FarmersMarket.Pages
 
         public string[] Genders { get; set; } = new[] { "Male", "Female", "Unspecified" };
 
-		public RegisterModel(UserManager<ApplicationUser> userManager,
+        public RegisterModel(UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
         RoleManager<IdentityRole> roleManager,
         IWebHostEnvironment environment)
@@ -60,7 +60,11 @@ namespace FarmersMarket.Pages
                     using var fileStream = new FileStream(imagePath,
                     FileMode.Create);
                     await Upload.CopyToAsync(fileStream);
-                    
+
+                    var encodestring = HttpUtility.HtmlEncode(RModel.AboutMe);
+
+
+
                     var user = new ApplicationUser()
                     {
                         UserName = RModel.Email,
@@ -69,43 +73,43 @@ namespace FarmersMarket.Pages
                         FullName = RModel.FullName,
                         PhoneNumber = RModel.PhoneNumber,
                         Gender = RModel.Gender,
-                        AboutMe = RModel.AboutMe,
+                        AboutMe = encodestring,
                         Location = RModel.Location,
                         LoginCheck = false,
-                        ImageURL = string.Format("/{0}/{1}", uploadsFolder,imageFile)
+                        ImageURL = string.Format("/{0}/{1}", uploadsFolder, imageFile)
 
 
 
-                    // Note : to display the encrypted data, create the protector instance with the same secret string and use the unprotect method.
+                        // Note : to display the encrypted data, create the protector instance with the same secret string and use the unprotect method.
 
-                };
-					//Create the Admin role if NOT exist
-					IdentityRole role = await roleManager.FindByIdAsync("Admin");
-					if (role == null)
-					{
-						IdentityResult result2 = await roleManager.CreateAsync(new IdentityRole("Admin"));
-						if (!result2.Succeeded)
-						{
-							ModelState.AddModelError("", "Create role admin failed");
-						}
-					}
-					var result = await userManager.CreateAsync(user, RModel.Password);
-					if (result.Succeeded)
-					{
-						result = await userManager.AddToRoleAsync(user, "Admin");
-						await signInManager.SignInAsync(user, false);
-						return RedirectToPage("Index");
-					}
-					foreach (var error in result.Errors)
-					{
-						ModelState.AddModelError("", error.Description);
-					}
-				}
-                
-
+                    };
+                    //Create the Admin role if NOT exist
+                    IdentityRole role = await roleManager.FindByIdAsync("Admin");
+                    if (role == null)
+                    {
+                        IdentityResult result2 = await roleManager.CreateAsync(new IdentityRole("Admin"));
+                        if (!result2.Succeeded)
+                        {
+                            ModelState.AddModelError("", "Create role admin failed");
+                        }
+                    }
+                    var result = await userManager.CreateAsync(user, RModel.Password);
+                    if (result.Succeeded)
+                    {
+                        result = await userManager.AddToRoleAsync(user, "Admin");
+                        await signInManager.SignInAsync(user, false);
+                        return RedirectToPage("Index");
+                    }
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
+                }
 
 
-                
+
+
+
             }
             return Page();
         }
